@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, DateTime, Integer
 from app.database.session import Base
 
+
 class News(Base):
     __tablename__ = "news"
 
@@ -8,4 +9,6 @@ class News(Base):
     title = Column(String, nullable=False)
     description = Column(String)
     url = Column(String, unique=True)
+    source = Column(String)
+    country = Column(String)
     published_at = Column(DateTime)

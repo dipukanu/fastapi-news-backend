@@ -1,6 +1,7 @@
-from app.database.session import engine
-from app.models import news
+from app.database.session import Base, engine
+from app import models
+
 
 # Initializes the database by creating tables based on the defined models.
 def init_db():
-    news.Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=engine)

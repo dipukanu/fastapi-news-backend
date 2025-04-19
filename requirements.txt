@@ -8,3 +8,5 @@ pytest
 pytest-cov
 psycopg2-binary
 requests
+python-jose
+python-multipart

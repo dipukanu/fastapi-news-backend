@@ -1,12 +1,14 @@
 fastapi
+httpx
 uvicorn
 pydantic
 pydantic_settings
-sqlalchemy
 python-dotenv
 pytest
+pytest-asyncio
 pytest-cov
 psycopg2-binary
-requests
 python-jose
 python-multipart
+requests
+sqlalchemy

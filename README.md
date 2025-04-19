@@ -38,3 +38,18 @@ uvicorn app.main:app --reload
 docker build -t news-api .
 docker run -p 8000:8000 news-api
 ```
+
+## 🧪 Running Tests
+
+Make sure your virtual environment is activated.
+
+To run all tests:
+
+```bash
+pytest
+```
+
+To run tests with coverage report:
+```
+pytest --cov=app --cov-report=term-missing
+```

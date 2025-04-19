@@ -1,7 +1,20 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
+from app.services.news import get_news
+from app.schemas.news import NewsListResponse
 
-router = APIRouter()
+router = APIRouter(prefix="/api/v1/news", tags=["News"])
 
-@router.get("", summary="News list endpoint")
-def news_list():
-    return {"detail": "This is the news list."}
+@router.get(
+    "",
+    response_model=NewsListResponse,
+    summary="Fetch all news with pagination",
+)
+def news_list(
+    country: str = Query("us", min_length=2, max_length=2, description="2‑letter country code"),
+    page: int = Query(1, ge=1, description="Page number"),
+    page_size: int = Query(10, ge=1, le=100, description="Number of items per page"),
+):
+    """
+    Returns paginated top headlines from NewsAPI.
+    """
+    return get_news(country=country, page=page, page_size=page_size)

@@ -1,8 +1,13 @@
+import logging
+
 import requests
 from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.models.news import News
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_news(
@@ -38,16 +43,21 @@ def get_news(
 
 
 def save_top_3_news_to_db(db: Session, country: str = "us"):
-    news_data = get_news(country=country, page_size=3)
-    for article in news_data["articles"]:
-        if not db.query(News).filter(News.url == article["url"]).first():
-            db_news = News(
-                title=article["title"],
-                description=article.get("description"),
-                url=article["url"],
-                source=article.get("source", {}).get("name"),
-                country=country,
-                published_at=article.get("publishedAt"),
-            )
-            db.add(db_news)
-    db.commit()
+    try:
+        news_data = get_news(country=country, page_size=3)
+        for article in news_data["articles"]:
+            if not db.query(News).filter(News.url == article["url"]).first():
+                db_news = News(
+                    title=article["title"],
+                    description=article.get("description"),
+                    url=article["url"],
+                    source=article.get("source", {}).get("name"),
+                    country=country,
+                    published_at=article.get("publishedAt"),
+                )
+                db.add(db_news)
+        db.commit()
+        logger.info("Top 3 news articles saved to DB successfully.")
+    except Exception as e:
+        logger.error(f"Unexpected error occurred: {e}")
+        db.rollback()

@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 import secrets
@@ -5,6 +7,9 @@ import secrets
 from app.database.session import get_db
 from app.models.client import Client
 from app.schemas.client import ClientCreate
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 router = APIRouter(prefix="/api/v1/clients", tags=["Clients"])
 
@@ -22,6 +27,8 @@ def register_client(payload: ClientCreate, db: Session = Depends(get_db)):
     client_id = secrets.token_hex(8)
     client_secret = secrets.token_urlsafe(32)
 
+    logger.info(f"Attempting to register client: {payload.name}")
+
     if db.query(Client).filter_by(client_id=client_id).first():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -37,5 +44,9 @@ def register_client(payload: ClientCreate, db: Session = Depends(get_db)):
     db.add(client)
     db.commit()
     db.refresh(client)
+
+    logger.info(
+        f"Client '{client.name}' registered successfully with ID {client.client_id}."
+    )
 
     return {"client_id": client.client_id, "client_secret": client.client_secret}

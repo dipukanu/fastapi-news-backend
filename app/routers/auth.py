@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException, Form
 from sqlalchemy.orm import Session
 from jose import jwt
@@ -6,6 +8,8 @@ from datetime import datetime, timedelta
 from app.database.session import get_db
 from app.models.client import Client
 from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -26,4 +30,7 @@ def generate_token(
         "exp": expires,
     }
     token = jwt.encode(payload, settings.client_secret, algorithm="HS256")
+
+    logger.info(f"Access token generated successfully for client_id: {client_id}")
+
     return {"access_token": token, "token_type": "bearer"}
